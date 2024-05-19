@@ -271,6 +271,11 @@ namespace WebApi.OutputCache.V2
                         string etag = actionExecutedContext.Response.Headers.ETag.Tag;
                         //ConfigureAwait false to avoid deadlocks
                         var content = await responseContent.ReadAsByteArrayAsync().ConfigureAwait(false);
+                        if (content == null || content.Length == 0)
+                        {
+                            ApplyCacheHeaders(actionExecutedContext.ActionContext.Response, cacheTime, actionExecutionTimestamp);
+                            return;
+                        }
 
                         responseContent.Headers.Remove("Content-Length");
 
