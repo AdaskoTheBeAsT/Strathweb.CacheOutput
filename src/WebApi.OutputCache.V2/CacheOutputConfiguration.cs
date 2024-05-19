@@ -4,30 +4,22 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Net.Http;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Web.Http;
 using WebApi.OutputCache.Core.Cache;
 
 namespace WebApi.OutputCache.V2
 {
-    public class CacheOutputConfiguration
+    public class CacheOutputConfiguration(HttpConfiguration configuration)
     {
-        private readonly HttpConfiguration _configuration;
-
-        public CacheOutputConfiguration(HttpConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
         public void RegisterCacheOutputProvider(Func<IApiOutputCache> provider)
         {
-            _configuration.Properties.GetOrAdd(typeof(IApiOutputCache), x => provider);
+            configuration.Properties.GetOrAdd(typeof(IApiOutputCache), _ => provider);
         }
 
         public void RegisterCacheKeyGeneratorProvider<T>(Func<T> provider)
             where T : ICacheKeyGenerator
         {
-            _configuration.Properties.GetOrAdd(typeof(T), x => provider);
+            configuration.Properties.GetOrAdd(typeof(T), _ => provider);
         }
 
         public void RegisterDefaultCacheKeyGeneratorProvider(Func<ICacheKeyGenerator> provider)
@@ -42,43 +34,35 @@ namespace WebApi.OutputCache.V2
 
         public string MakeBaseCacheKey<T, TU>(Expression<Func<T, TU>> expression)
         {
-            var method = expression.Body as MethodCallExpression;
-            if (method == null)
+            if (expression.Body is not MethodCallExpression method)
             {
                 throw new ArgumentException("Expression is wrong", nameof(expression));
             }
 
             var methodName = method.Method.Name;
-            var nameAttribs = method.Method.GetCustomAttributes(typeof(ActionNameAttribute), false);
-            if (nameAttribs.Any())
+            var nameAttributes = method.Method.GetCustomAttributes(typeof(ActionNameAttribute), inherit: false);
+            if (nameAttributes.Length > 0)
             {
-                var actionNameAttrib = (ActionNameAttribute)nameAttribs.FirstOrDefault();
+                var actionNameAttrib = (ActionNameAttribute)nameAttributes.FirstOrDefault();
                 if (actionNameAttrib != null)
                 {
                     methodName = actionNameAttrib.Name;
                 }
             }
 
-            return $"{typeof(T).FullName.ToLower(CultureInfo.InvariantCulture)}-{methodName.ToLower(CultureInfo.InvariantCulture)}";
+            return $"{typeof(T).FullName?.ToLower(CultureInfo.InvariantCulture)}-{methodName.ToLower(CultureInfo.InvariantCulture)}";
         }
 
         public ICacheKeyGenerator GetCacheKeyGenerator(HttpRequestMessage request, Type generatorType)
         {
             generatorType ??= typeof(ICacheKeyGenerator);
-            _configuration.Properties.TryGetValue(generatorType, out var cache);
+            configuration.Properties.TryGetValue(generatorType, out var cache);
 
-            ICacheKeyGenerator generator;
-            if (cache is Func<ICacheKeyGenerator> cacheFunc)
-            {
-                generator = cacheFunc();
-            }
-            else
-            {
-                using (var scope = request.GetDependencyScope())
-                {
-                    generator = scope.GetService(generatorType) as ICacheKeyGenerator;
-                }
-            }
+#pragma warning disable IDISP004 // Don't ignore created IDisposable
+            var generator = cache is Func<ICacheKeyGenerator> cacheFunc
+                ? cacheFunc()
+                : request.GetDependencyScope().GetService(generatorType) as ICacheKeyGenerator;
+#pragma warning restore IDISP004 // Don't ignore created IDisposable
 
             return generator
                 ?? TryActivateCacheKeyGenerator(generatorType)
@@ -87,20 +71,13 @@ namespace WebApi.OutputCache.V2
 
         public IApiOutputCache GetCacheOutputProvider(HttpRequestMessage request)
         {
-            _configuration.Properties.TryGetValue(typeof(IApiOutputCache), out var cache);
+            configuration.Properties.TryGetValue(typeof(IApiOutputCache), out var cache);
 
-            IApiOutputCache cacheOutputProvider;
-            if (cache is Func<IApiOutputCache> cacheFunc)
-            {
-                cacheOutputProvider = cacheFunc();
-            }
-            else
-            {
-                using (var scope = request.GetDependencyScope())
-                {
-                    cacheOutputProvider = scope.GetService(typeof(IApiOutputCache)) as IApiOutputCache ?? new MemoryCacheDefault();
-                }
-            }
+#pragma warning disable IDISP004 // Don't ignore created IDisposable
+            var cacheOutputProvider = cache is Func<IApiOutputCache> cacheFunc
+                ? cacheFunc()
+                : request.GetDependencyScope().GetService(typeof(IApiOutputCache)) as IApiOutputCache ?? new MemoryCacheDefault();
+#pragma warning restore IDISP004 // Don't ignore created IDisposable
 
             return cacheOutputProvider;
         }

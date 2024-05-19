@@ -64,8 +64,10 @@ namespace WebApi.OutputCache.V2.Tests
                 conf.Properties.TryGetValue(typeof(IApiOutputCache), out var cache1);
 
                 conf.Properties.TryGetValue(typeof(IApiOutputCache), out var cache2);
+                var obj1 = ((Func<IApiOutputCache>)cache1)();
+                var obj2 = ((Func<IApiOutputCache>)cache2)();
 
-                cache1.Should().BeEquivalentTo(cache2);
+                obj1.Should().Be(obj2);
             }
         }
 
@@ -80,7 +82,10 @@ namespace WebApi.OutputCache.V2.Tests
 
                 conf.Properties.TryGetValue(typeof(IApiOutputCache), out var cache2);
 
-                cache1.Should().NotBeEquivalentTo(cache2);
+                var obj1 = ((Func<IApiOutputCache>)cache1)();
+                var obj2 = ((Func<IApiOutputCache>)cache2)();
+
+                obj1.Should().NotBe(obj2);
             }
         }
     }

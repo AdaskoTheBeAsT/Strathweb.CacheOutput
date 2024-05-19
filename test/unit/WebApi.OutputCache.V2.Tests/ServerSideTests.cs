@@ -161,7 +161,7 @@ namespace WebApi.OutputCache.V2.Tests
                     Times.Exactly(2));
                 _cache.Verify(
                     s => s.Add(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<DateTimeOffset>(), It.IsAny<string>()),
-                    Times.Never());
+                    Times.Exactly(4));
             }
         }
 

@@ -34,19 +34,20 @@ namespace WebApi.OutputCache.V2
             var controller = actionExecutedContext.ActionContext.ControllerContext.ControllerDescriptor;
             var actions = FindAllGetMethods(controller.ControllerType, TryMatchType ? actionExecutedContext.ActionContext.ActionDescriptor.GetParameters() : null);
 
-            using (var config = actionExecutedContext.ActionContext.Request.GetConfiguration())
-            {
-                EnsureCache(config, actionExecutedContext.ActionContext.Request);
+#pragma warning disable IDISP001 // Dispose created
+            var config = actionExecutedContext.ActionContext.Request.GetConfiguration();
+#pragma warning restore IDISP001 // Dispose created
 
-                foreach (var action in actions)
+            EnsureCache(config, actionExecutedContext.ActionContext.Request);
+
+            foreach (var action in actions)
+            {
+                var key = config.CacheOutputConfiguration().MakeBaseCacheKey(
+                    controller.ControllerType.FullName,
+                    action);
+                if (WebApiCache.Contains(key))
                 {
-                    var key = config.CacheOutputConfiguration().MakeBaseCacheKey(
-                        controller.ControllerType.FullName,
-                        action);
-                    if (WebApiCache.Contains(key))
-                    {
-                        WebApiCache.RemoveStartsWith(key);
-                    }
+                    WebApiCache.RemoveStartsWith(key);
                 }
             }
         }

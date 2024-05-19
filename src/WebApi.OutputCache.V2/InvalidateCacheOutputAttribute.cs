@@ -31,16 +31,17 @@ namespace WebApi.OutputCache.V2
 
             _controller = _controller ?? actionExecutedContext.ActionContext.ControllerContext.ControllerDescriptor.ControllerType.FullName;
 
-            using (var config = actionExecutedContext.Request.GetConfiguration())
-            {
-                EnsureCache(config, actionExecutedContext.Request);
+#pragma warning disable IDISP001 // Dispose created
+            var config = actionExecutedContext.Request.GetConfiguration();
+#pragma warning restore IDISP001 // Dispose created
 
-                var key = config.CacheOutputConfiguration()
-                    .MakeBaseCacheKey(_controller, _methodName);
-                if (WebApiCache.Contains(key))
-                {
-                    WebApiCache.RemoveStartsWith(key);
-                }
+            EnsureCache(config, actionExecutedContext.Request);
+
+            var key = config.CacheOutputConfiguration()
+                .MakeBaseCacheKey(_controller, _methodName);
+            if (WebApiCache.Contains(key))
+            {
+                WebApiCache.RemoveStartsWith(key);
             }
         }
     }

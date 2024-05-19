@@ -5,7 +5,8 @@ using System.Runtime.Caching;
 
 namespace WebApi.OutputCache.Core.Cache
 {
-    public class MemoryCacheDefault : IApiOutputCache
+    public class MemoryCacheDefault
+        : IApiOutputCache
     {
         private static readonly MemoryCache Cache = MemoryCache.Default;
 
@@ -55,7 +56,7 @@ namespace WebApi.OutputCache.Core.Cache
             if (!string.IsNullOrWhiteSpace(dependsOnKey))
             {
                 cachePolicy.ChangeMonitors.Add(
-                    Cache.CreateCacheEntryChangeMonitor(new[] { dependsOnKey }));
+                    Cache.CreateCacheEntryChangeMonitor([dependsOnKey]));
             }
 
             lock (Cache)

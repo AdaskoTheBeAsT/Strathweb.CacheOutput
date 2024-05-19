@@ -21,10 +21,11 @@ namespace WebApi.OutputCache.V2
         {
             var controller = context.ControllerContext.ControllerDescriptor.ControllerType.FullName;
             var action = context.ActionDescriptor.ActionName;
-            using (var configuration = context.Request.GetConfiguration())
-            {
-                return configuration.CacheOutputConfiguration().MakeBaseCacheKey(controller, action);
-            }
+#pragma warning disable IDISP001 // Dispose created
+            var configuration = context.Request.GetConfiguration();
+#pragma warning restore IDISP001 // Dispose created
+
+            return configuration.CacheOutputConfiguration().MakeBaseCacheKey(controller, action);
         }
 
         protected virtual string FormatParameters(HttpActionContext context, bool excludeQueryString)
