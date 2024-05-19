@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -11,10 +10,20 @@ namespace WebApi.OutputCache.V2.Demo
     public class Teams2Controller : ApiController
     {
         private static readonly List<Team> Teams = new List<Team>
+        {
+            new Team
             {
-                new Team {Id = 1, League = "NHL", Name = "Leafs"},
-                new Team {Id = 2, League = "NHL", Name = "Habs"},
-            };
+                Id = 1,
+                League = "NHL",
+                Name = "Leafs",
+            },
+            new Team
+            {
+                Id = 2,
+                League = "NHL",
+                Name = "Habs",
+            },
+        };
 
         [CacheOutput(ClientTimeSpan = 50, ServerTimeSpan = 50)]
         public IEnumerable<Team> Get()
@@ -25,24 +34,43 @@ namespace WebApi.OutputCache.V2.Demo
         [CacheOutputUntil(2014, 7, 20)]
         public Team GetById(int id)
         {
-            var team = Teams.FirstOrDefault(i => i.Id == id);
-            if (team == null) throw new HttpResponseException(HttpStatusCode.NotFound);
+            var team = Teams.Find(i => i.Id == id);
+            if (team == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
 
             return team;
         }
 
         public void Post(Team value)
         {
-            if (!ModelState.IsValid) throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState));
+            if (!ModelState.IsValid)
+            {
+                using (var request = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState))
+                {
+                    throw new HttpResponseException(request);
+                }
+            }
+
             Teams.Add(value);
         }
 
         public void Put(int id, Team value)
         {
-            if (!ModelState.IsValid) throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState));
+            if (!ModelState.IsValid)
+            {
+                using (var request = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState))
+                {
+                    throw new HttpResponseException(request);
+                }
+            }
 
-            var team = Teams.FirstOrDefault(i => i.Id == id);
-            if (team == null) throw new HttpResponseException(HttpStatusCode.NotFound);
+            var team = Teams.Find(i => i.Id == id);
+            if (team == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
 
             team.League = value.League;
             team.Name = value.Name;
@@ -50,8 +78,11 @@ namespace WebApi.OutputCache.V2.Demo
 
         public void Delete(int id)
         {
-            var team = Teams.FirstOrDefault(i => i.Id == id);
-            if (team == null) throw new HttpResponseException(HttpStatusCode.NotFound);
+            var team = Teams.Find(i => i.Id == id);
+            if (team == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
 
             Teams.Remove(team);
         }

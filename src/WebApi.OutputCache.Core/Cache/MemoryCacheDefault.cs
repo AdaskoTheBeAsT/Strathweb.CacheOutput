@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
@@ -9,6 +9,14 @@ namespace WebApi.OutputCache.Core.Cache
     {
         private static readonly MemoryCache Cache = MemoryCache.Default;
 
+        public virtual IEnumerable<string> AllKeys
+        {
+            get
+            {
+                return Cache.Select(x => x.Key);
+            }
+        }
+
         public virtual void RemoveStartsWith(string key)
         {
             lock (Cache)
@@ -17,16 +25,11 @@ namespace WebApi.OutputCache.Core.Cache
             }
         }
 
-        public virtual T Get<T>(string key) where T : class
+        public virtual T Get<T>(string key)
+            where T : class
         {
             var o = Cache.Get(key) as T;
             return o;
-        }
-
-        [Obsolete("Use Get<T> instead")]
-        public virtual object Get(string key)
-        {
-            return Cache.Get(key);
         }
 
         public virtual void Remove(string key)
@@ -46,26 +49,18 @@ namespace WebApi.OutputCache.Core.Cache
         {
             var cachePolicy = new CacheItemPolicy
             {
-                AbsoluteExpiration = expiration
+                AbsoluteExpiration = expiration,
             };
 
             if (!string.IsNullOrWhiteSpace(dependsOnKey))
             {
                 cachePolicy.ChangeMonitors.Add(
-                    Cache.CreateCacheEntryChangeMonitor(new[] { dependsOnKey })
-                );
+                    Cache.CreateCacheEntryChangeMonitor(new[] { dependsOnKey }));
             }
+
             lock (Cache)
             {
                 Cache.Add(key, o, cachePolicy);
-            }
-        }
-
-        public virtual IEnumerable<string> AllKeys
-        {
-            get
-            {
-                return Cache.Select(x => x.Key);
             }
         }
     }

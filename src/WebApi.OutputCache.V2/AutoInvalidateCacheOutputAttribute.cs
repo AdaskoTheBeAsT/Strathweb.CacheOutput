@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,25 +17,36 @@ namespace WebApi.OutputCache.V2
 
         public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
         {
-            if (actionExecutedContext.Response != null && !actionExecutedContext.Response.IsSuccessStatusCode) return;
+            if (actionExecutedContext.Response != null && !actionExecutedContext.Response.IsSuccessStatusCode)
+            {
+                return;
+            }
+
             if (actionExecutedContext.ActionContext.Request.Method != HttpMethod.Post &&
                 actionExecutedContext.ActionContext.Request.Method != HttpMethod.Put &&
                 actionExecutedContext.ActionContext.Request.Method != HttpMethod.Delete &&
-                actionExecutedContext.ActionContext.Request.Method.Method.ToLower() != "patch" &&
-                actionExecutedContext.ActionContext.Request.Method.Method.ToLower() != "merge") return;
+                !actionExecutedContext.ActionContext.Request.Method.Method.Equals("patch", StringComparison.OrdinalIgnoreCase) &&
+                !actionExecutedContext.ActionContext.Request.Method.Method.Equals("merge", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
 
             var controller = actionExecutedContext.ActionContext.ControllerContext.ControllerDescriptor;
             var actions = FindAllGetMethods(controller.ControllerType, TryMatchType ? actionExecutedContext.ActionContext.ActionDescriptor.GetParameters() : null);
 
-            var config = actionExecutedContext.ActionContext.Request.GetConfiguration();
-            EnsureCache(config, actionExecutedContext.ActionContext.Request);
-
-            foreach (var action in actions)
+            using (var config = actionExecutedContext.ActionContext.Request.GetConfiguration())
             {
-                var key = config.CacheOutputConfiguration().MakeBaseCachekey(controller.ControllerType.FullName, action);
-                if (WebApiCache.Contains(key))
+                EnsureCache(config, actionExecutedContext.ActionContext.Request);
+
+                foreach (var action in actions)
                 {
-                    WebApiCache.RemoveStartsWith(key);
+                    var key = config.CacheOutputConfiguration().MakeBaseCacheKey(
+                        controller.ControllerType.FullName,
+                        action);
+                    if (WebApiCache.Contains(key))
+                    {
+                        WebApiCache.RemoveStartsWith(key);
+                    }
                 }
             }
         }
@@ -45,8 +56,15 @@ namespace WebApi.OutputCache.V2
             var actions = controllerType.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
             var filteredActions = actions.Where(x =>
                 {
-                    if (x.Name.ToLower().StartsWith("get")) return true;
-                    if (x.GetCustomAttributes(typeof(HttpGetAttribute), true).Any()) return true;
+                    if (x.Name.StartsWith("get", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return true;
+                    }
+
+                    if (x.GetCustomAttributes(typeof(HttpGetAttribute), true).Any())
+                    {
+                        return true;
+                    }
 
                     return false;
                 });
@@ -54,11 +72,23 @@ namespace WebApi.OutputCache.V2
             if (httpParameterDescriptors != null)
             {
                 var allowedTypes = httpParameterDescriptors.Select(x => x.ParameterType).ToList();
-                var filteredByType = filteredActions.ToList().Where(x =>
+                var filteredByType = filteredActions.Where(x =>
                     {
-                        if (allowedTypes.Any(s => s == x.ReturnType)) return true;
-                        if (allowedTypes.Any(s => typeof(IEnumerable).IsAssignableFrom(x.ReturnType) && x.ReturnType.GetGenericArguments().Any() && x.ReturnType.GetGenericArguments()[0] == s)) return true;
-                        if (allowedTypes.Any(s => typeof(IEnumerable).IsAssignableFrom(x.ReturnType) && x.ReturnType.GetElementType() == s)) return true;
+                        if (allowedTypes.Exists(s => s == x.ReturnType))
+                        {
+                            return true;
+                        }
+
+                        if (allowedTypes.Exists(s => typeof(IEnumerable).IsAssignableFrom(x.ReturnType) && x.ReturnType.GetGenericArguments().Any() && x.ReturnType.GetGenericArguments()[0] == s))
+                        {
+                            return true;
+                        }
+
+                        if (allowedTypes.Exists(s => typeof(IEnumerable).IsAssignableFrom(x.ReturnType) && x.ReturnType.GetElementType() == s))
+                        {
+                            return true;
+                        }
+
                         return false;
                     });
 
@@ -71,8 +101,12 @@ namespace WebApi.OutputCache.V2
                     if (overridenNames.Any())
                     {
                         var first = (ActionNameAttribute)overridenNames.FirstOrDefault();
-                        if (first != null) return first.Name;
+                        if (first != null)
+                        {
+                            return first.Name;
+                        }
                     }
+
                     return x.Name;
                 });
 

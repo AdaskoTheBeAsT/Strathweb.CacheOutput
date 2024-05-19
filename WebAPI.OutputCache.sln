@@ -1,30 +1,49 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.22823.1
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{944DCBA5-777A-4BE8-A1A3-1EA0924D8B70}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\NuGet.exe = .nuget\NuGet.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CEA1F6A7-ACA0-4B5B-BEE0-23AEB7E30A7D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{70946FFB-B575-4B2F-A174-3BDD93100097}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "demo", "demo", "{1644F771-3A1F-40A4-80AA-CDB22B334F1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.OutputCache.V2.Tests", "test\WebApi.OutputCache.V2.Tests\WebApi.OutputCache.V2.Tests.csproj", "{1267460B-C100-48AD-B2E2-9DDE2E40F052}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.OutputCache.V2", "src\WebApi.OutputCache.V2\WebApi.OutputCache.V2.csproj", "{7A6F57F6-38E1-4287-812E-AD7D1025BA5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.OutputCache.V2", "src\WebApi.OutputCache.V2\WebApi.OutputCache.V2.csproj", "{7A6F57F6-38E1-4287-812E-AD7D1025BA5E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.OutputCache.V2.Demo", "sample\WebApi.OutputCache.V2.Demo\WebApi.OutputCache.V2.Demo.csproj", "{FC585541-1F28-4D49-BCD9-1A08A90B2C66}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.OutputCache.Core", "src\WebApi.OutputCache.Core\WebApi.OutputCache.Core.csproj", "{3E45FA0B-C465-4DE9-9BC3-40A606B73E84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.OutputCache.Core", "src\WebApi.OutputCache.Core\WebApi.OutputCache.Core.csproj", "{3E45FA0B-C465-4DE9-9BC3-40A606B73E84}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi.OutputCache.Core.Tests", "test\WebApi.OutputCache.Core.Tests\WebApi.OutputCache.Core.Tests.csproj", "{44F519D6-E825-442C-A112-B5C4404EAA44}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "unit", "unit", "{E64D38C0-181B-446A-BCEA-725FB7D4545F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".props", ".props", "{8CC0DE75-1E62-426B-924E-6007B36A5D6F}"
+	ProjectSection(SolutionItems) = preProject
+		test\Directory.Build.props = test\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".props", ".props", "{197839C3-DF0B-4481-B332-3D97ECE8BFC5}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.runsettings = .runsettings
+		AdaskoTheBeAsT.ruleset = AdaskoTheBeAsT.ruleset
+		DeterministicBuild.targets = DeterministicBuild.targets
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		global.json = global.json
+		License.txt = License.txt
+		README.md = README.md
+		SecurityCodeScan.config.yml = SecurityCodeScan.config.yml
+		Settings.StyleCop = Settings.StyleCop
+		stylecop.json = stylecop.json
+		WebAPI.OutputCache.sln.DotSettings = WebAPI.OutputCache.sln.DotSettings
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.OutputCache.Core.Tests", "test\unit\WebApi.OutputCache.Core.Tests\WebApi.OutputCache.Core.Tests.csproj", "{BA31EF57-0018-442C-BC9A-58DADD6C25C2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.OutputCache.V2.Tests", "test\unit\WebApi.OutputCache.V2.Tests\WebApi.OutputCache.V2.Tests.csproj", "{BA30906A-DD55-4C54-964A-5150B889E917}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,10 +51,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1267460B-C100-48AD-B2E2-9DDE2E40F052}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1267460B-C100-48AD-B2E2-9DDE2E40F052}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1267460B-C100-48AD-B2E2-9DDE2E40F052}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1267460B-C100-48AD-B2E2-9DDE2E40F052}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7A6F57F6-38E1-4287-812E-AD7D1025BA5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7A6F57F6-38E1-4287-812E-AD7D1025BA5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A6F57F6-38E1-4287-812E-AD7D1025BA5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -48,19 +63,28 @@ Global
 		{3E45FA0B-C465-4DE9-9BC3-40A606B73E84}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E45FA0B-C465-4DE9-9BC3-40A606B73E84}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E45FA0B-C465-4DE9-9BC3-40A606B73E84}.Release|Any CPU.Build.0 = Release|Any CPU
-		{44F519D6-E825-442C-A112-B5C4404EAA44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{44F519D6-E825-442C-A112-B5C4404EAA44}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{44F519D6-E825-442C-A112-B5C4404EAA44}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{44F519D6-E825-442C-A112-B5C4404EAA44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA31EF57-0018-442C-BC9A-58DADD6C25C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA31EF57-0018-442C-BC9A-58DADD6C25C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA31EF57-0018-442C-BC9A-58DADD6C25C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA31EF57-0018-442C-BC9A-58DADD6C25C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA30906A-DD55-4C54-964A-5150B889E917}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA30906A-DD55-4C54-964A-5150B889E917}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA30906A-DD55-4C54-964A-5150B889E917}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA30906A-DD55-4C54-964A-5150B889E917}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{1267460B-C100-48AD-B2E2-9DDE2E40F052} = {70946FFB-B575-4B2F-A174-3BDD93100097}
 		{7A6F57F6-38E1-4287-812E-AD7D1025BA5E} = {CEA1F6A7-ACA0-4B5B-BEE0-23AEB7E30A7D}
 		{FC585541-1F28-4D49-BCD9-1A08A90B2C66} = {1644F771-3A1F-40A4-80AA-CDB22B334F1F}
 		{3E45FA0B-C465-4DE9-9BC3-40A606B73E84} = {CEA1F6A7-ACA0-4B5B-BEE0-23AEB7E30A7D}
-		{44F519D6-E825-442C-A112-B5C4404EAA44} = {70946FFB-B575-4B2F-A174-3BDD93100097}
+		{E64D38C0-181B-446A-BCEA-725FB7D4545F} = {70946FFB-B575-4B2F-A174-3BDD93100097}
+		{8CC0DE75-1E62-426B-924E-6007B36A5D6F} = {70946FFB-B575-4B2F-A174-3BDD93100097}
+		{BA31EF57-0018-442C-BC9A-58DADD6C25C2} = {E64D38C0-181B-446A-BCEA-725FB7D4545F}
+		{BA30906A-DD55-4C54-964A-5150B889E917} = {E64D38C0-181B-446A-BCEA-725FB7D4545F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E04AE46D-5F64-4424-8600-44CF05C43297}
 	EndGlobalSection
 EndGlobal

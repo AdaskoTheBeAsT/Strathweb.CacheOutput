@@ -1,5 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+using System;
+using System.Collections;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -14,14 +14,17 @@ namespace WebApi.OutputCache.V2
             var key = MakeBaseKey(context);
             var parameters = FormatParameters(context, excludeQueryString);
 
-            return string.Format("{0}{1}:{2}", key, parameters, mediaType);
+            return $"{key}{parameters}:{mediaType}";
         }
 
         protected virtual string MakeBaseKey(HttpActionContext context)
         {
             var controller = context.ControllerContext.ControllerDescriptor.ControllerType.FullName;
             var action = context.ActionDescriptor.ActionName;
-            return context.Request.GetConfiguration().CacheOutputConfiguration().MakeBaseCachekey(controller, action);
+            using (var configuration = context.Request.GetConfiguration())
+            {
+                return configuration.CacheOutputConfiguration().MakeBaseCacheKey(controller, action);
+            }
         }
 
         protected virtual string FormatParameters(HttpActionContext context, bool excludeQueryString)
@@ -34,19 +37,34 @@ namespace WebApi.OutputCache.V2
             {
                 var queryStringParameters =
                     context.Request.GetQueryNameValuePairs()
-                           .Where(x => x.Key.ToLower() != "callback")
+                           .Where(x => !x.Key.Equals("callback", StringComparison.OrdinalIgnoreCase))
                            .Select(x => x.Key + "=" + x.Value);
-                var parametersCollections = actionParameters.Union(queryStringParameters);
+                var parametersCollections = actionParameters.Union(queryStringParameters, StringComparer.OrdinalIgnoreCase);
                 parameters = "-" + string.Join("&", parametersCollections);
 
                 var callbackValue = GetJsonpCallback(context.Request);
                 if (!string.IsNullOrWhiteSpace(callbackValue))
                 {
                     var callback = "callback=" + callbackValue;
-                    if (parameters.Contains("&" + callback)) parameters = parameters.Replace("&" + callback, string.Empty);
-                    if (parameters.Contains(callback + "&")) parameters = parameters.Replace(callback + "&", string.Empty);
-                    if (parameters.Contains("-" + callback)) parameters = parameters.Replace("-" + callback, string.Empty);
-                    if (parameters.EndsWith("&")) parameters = parameters.TrimEnd('&');
+                    if (parameters.Contains("&" + callback))
+                    {
+                        parameters = parameters.Replace("&" + callback, string.Empty);
+                    }
+
+                    if (parameters.Contains(callback + "&"))
+                    {
+                        parameters = parameters.Replace(callback + "&", string.Empty);
+                    }
+
+                    if (parameters.Contains("-" + callback))
+                    {
+                        parameters = parameters.Replace("-" + callback, string.Empty);
+                    }
+
+                    if (parameters.EndsWith("&", StringComparison.OrdinalIgnoreCase))
+                    {
+                        parameters = parameters.TrimEnd('&');
+                    }
                 }
             }
             else
@@ -54,7 +72,11 @@ namespace WebApi.OutputCache.V2
                 parameters = "-" + string.Join("&", actionParameters);
             }
 
-            if (parameters == "-") parameters = string.Empty;
+            if (parameters.Equals("-"))
+            {
+                parameters = string.Empty;
+            }
+
             return parameters;
         }
 
@@ -67,10 +89,19 @@ namespace WebApi.OutputCache.V2
 
                 if (query != null)
                 {
-                    var queryVal = query.FirstOrDefault(x => x.Key.ToLower() == "callback");
-                    if (!queryVal.Equals(default(KeyValuePair<string, string>))) callback = queryVal.Value;
+#pragma warning disable S3267 // Loops should be simplified with "LINQ" expressions
+                    foreach (var keyValuePair in query)
+                    {
+                        if (keyValuePair.Key.Equals(nameof(callback), StringComparison.OrdinalIgnoreCase))
+                        {
+                            callback = keyValuePair.Value;
+                            break;
+                        }
+                    }
+#pragma warning restore S3267 // Loops should be simplified with "LINQ" expressions
                 }
             }
+
             return callback;
         }
 
@@ -82,6 +113,7 @@ namespace WebApi.OutputCache.V2
                 var paramArray = val as IEnumerable;
                 return paramArray.Cast<object>().Aggregate(concatValue, (current, paramValue) => current + (paramValue + ";"));
             }
+
             return val.ToString();
         }
     }

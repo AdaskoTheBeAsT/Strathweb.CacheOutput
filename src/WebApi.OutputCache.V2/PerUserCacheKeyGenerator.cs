@@ -1,22 +1,25 @@
-﻿using System.Net.Http.Headers;
+using System.Globalization;
+using System.Net.Http.Headers;
 using System.Web.Http.Controllers;
 
 namespace WebApi.OutputCache.V2
 {
-    public class PerUserCacheKeyGenerator : DefaultCacheKeyGenerator
+    public class PerUserCacheKeyGenerator
+        : DefaultCacheKeyGenerator
     {
-        public override string MakeCacheKey(HttpActionContext context, MediaTypeHeaderValue mediaType, bool excludeQueryString = false)
+        public override string MakeCacheKey(
+            HttpActionContext context,
+            MediaTypeHeaderValue mediaType,
+            bool excludeQueryString = false)
         {
             var baseKey = MakeBaseKey(context);
             var parameters = FormatParameters(context, excludeQueryString);
             var userIdentity = FormatUserIdentity(context);
 
-            return string.Format("{0}{1}:{2}:{3}", baseKey, parameters, userIdentity, mediaType);
+            return $"{baseKey}{parameters}:{userIdentity}:{mediaType}";
         }
 
-        protected virtual string FormatUserIdentity(HttpActionContext context)
-        {
-            return context.RequestContext.Principal.Identity.Name.ToLower();
-        }
+        protected virtual string FormatUserIdentity(HttpActionContext context) =>
+            context.RequestContext.Principal.Identity.Name.ToLower(CultureInfo.InvariantCulture);
     }
 }

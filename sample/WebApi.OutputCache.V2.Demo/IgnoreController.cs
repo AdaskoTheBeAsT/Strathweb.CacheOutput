@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Web.Http;
 
 namespace WebApi.OutputCache.V2.Demo
@@ -10,14 +11,14 @@ namespace WebApi.OutputCache.V2.Demo
         [Route("cached")]
         public string GetCached()
         {
-            return DateTime.Now.ToString();
+            return DateTime.Now.ToString(CultureInfo.InvariantCulture);
         }
 
         [IgnoreCacheOutput]
         [Route("uncached")]
         public string GetUnCached()
         {
-            return DateTime.Now.ToString();
+            return DateTime.Now.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

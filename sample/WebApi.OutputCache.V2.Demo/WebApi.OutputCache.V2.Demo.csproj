@@ -1,98 +1,79 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="MSBuild.SDK.SystemWeb/4.0.88">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{FC585541-1F28-4D49-BCD9-1A08A90B2C66}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WebApi.OutputCache.V2.Demo</RootNamespace>
-    <AssemblyName>WebApi.OutputCache.V2.Demo</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <TargetFramework>net481</TargetFramework>
+    <Copyright>Copyright AdaskoTheBeAsT © 2023</Copyright>
+    <NoWarn>$(NoWarn);CC0091</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject />
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GeneratedBindingRedirectsAction>Overwrite</GeneratedBindingRedirectsAction>
+    <MicrosoftNetCompilersToolset_Version>4.9.2</MicrosoftNetCompilersToolset_Version>
+    <MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>4.1.0</MicrosoftCodeDomProvidersDotNetCompilerPlatform_Version>
   </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNet.WebApi.SelfHost" Version="5.3.0" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.3.0" />
+		<PackageReference Include="Microsoft.Owin.Host.SystemWeb" Version="4.2.2" />
+		<PackageReference Include="Microsoft.VisualStudio.SlowCheetah" Version="4.0.50">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Net.Http">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.5\System.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.Http, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.Core.5.2.3\lib\net45\System.Web.Http.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Web.Http.SelfHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\packages\Microsoft.AspNet.WebApi.SelfHost.5.2.2\lib\net45\System.Web.Http.SelfHost.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Compile Remove="App_Start\**" />
+    <Compile Remove="_PublishedWebsites\**" />
+    <Content Remove="App_Start\**" />
+    <Content Remove="_PublishedWebsites\**" />
+    <EmbeddedResource Remove="App_Start\**" />
+    <EmbeddedResource Remove="_PublishedWebsites\**" />
+    <None Remove="App_Start\**" />
+    <None Remove="_PublishedWebsites\**" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="IgnoreController.cs" />
-    <Compile Include="Teams2Controller.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Team.cs" />
-    <Compile Include="TeamsController.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <None Remove="Web.Debug.config" />
+    <None Remove="Web.Release.config" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config" />
+    <None Include="Properties\launchSettings.json" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
+    <Content Include="Web.Debug.config">
+      <DependentUpon></DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon></DependentUpon>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\..\src\WebApi.OutputCache.Core\WebApi.OutputCache.Core.csproj">
-      <Project>{3E45FA0B-C465-4DE9-9BC3-40A606B73E84}</Project>
-      <Name>WebApi.OutputCache.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\WebApi.OutputCache.V2\WebApi.OutputCache.V2.csproj">
-      <Project>{7a6f57f6-38e1-4287-812e-ad7d1025ba5e}</Project>
-      <Name>WebApi2.OutputCache</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\src\WebApi.OutputCache.Core\WebApi.OutputCache.Core.csproj" />
+    <ProjectReference Include="..\..\src\WebApi.OutputCache.V2\WebApi.OutputCache.V2.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
+	<ItemGroup>
+		<Compile Update="Global.asax.cs">
+			<DependentUpon>Global.asax</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+  <!-- Conditionally set VSToolsPath_WebApplications only if not in Visual Studio -->
+  <PropertyGroup Condition="'$(BuildingInsideVisualStudio)' != 'true'">
+    <VSToolsPath Condition="Exists('C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Microsoft\VisualStudio\v17.0') and '$(VSToolsPath)' == ''">C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Microsoft\VisualStudio\v17.0</VSToolsPath>
+    <VSToolsPath Condition="Exists('C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Microsoft\VisualStudio\v17.0') and '$(VSToolsPath)' == ''">C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Microsoft\VisualStudio\v17.0</VSToolsPath>
+    <VSToolsPath Condition="Exists('C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VisualStudio\v17.0') and '$(VSToolsPath)' == ''">C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VisualStudio\v17.0</VSToolsPath>
+    <VSToolsPath_WebApplications Condition="'$(VSToolsPath_WebApplications)' == ''">$(VSToolsPath)\WebApplications</VSToolsPath_WebApplications>
+  </PropertyGroup>
+
+  <!-- Conditionally import Microsoft.WebApplication.targets only if not in Visual Studio -->
+  <Import Project="$(VSToolsPath_WebApplications)\Microsoft.WebApplication.targets" Condition="'$(BuildingInsideVisualStudio)' != 'true'" />
+
 </Project>

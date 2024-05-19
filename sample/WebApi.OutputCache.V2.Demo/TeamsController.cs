@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -10,10 +10,20 @@ namespace WebApi.OutputCache.V2.Demo
     public class TeamsController : ApiController
     {
         private static readonly List<Team> Teams = new List<Team>
+        {
+            new Team
             {
-                new Team {Id = 1, League = "NHL", Name = "Leafs"},
-                new Team {Id = 2, League = "NHL", Name = "Habs"},
-            };
+                Id = 1,
+                League = "NHL",
+                Name = "Leafs",
+            },
+            new Team
+            {
+                Id = 2,
+                League = "NHL",
+                Name = "Habs",
+            },
+        };
 
         [CacheOutput(ClientTimeSpan = 50, ServerTimeSpan = 50)]
         public IEnumerable<Team> Get()
@@ -24,37 +34,59 @@ namespace WebApi.OutputCache.V2.Demo
         [CacheOutputUntil(2016, 7, 20)]
         public Team GetById(int id)
         {
-            var team = Teams.FirstOrDefault(i => i.Id == id);
-            if (team == null) throw new HttpResponseException(HttpStatusCode.NotFound);
+            var team = Teams.Find(i => i.Id == id);
+            if (team == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
 
             return team;
         }
 
-        [InvalidateCacheOutput("Get")]
+        [InvalidateCacheOutput(nameof(Get))]
         public void Post(Team value)
         {
-            if (!ModelState.IsValid) throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState));
+            if (!ModelState.IsValid)
+            {
+                using (var request = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState))
+                {
+                    throw new HttpResponseException(request);
+                }
+            }
+
             Teams.Add(value);
         }
 
         public void Put(int id, Team value)
         {
-            if (!ModelState.IsValid) throw new HttpResponseException(Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState));
+            if (!ModelState.IsValid)
+            {
+                using (var request = Request.CreateErrorResponse(HttpStatusCode.BadRequest, ModelState))
+                {
+                    throw new HttpResponseException(request);
+                }
+            }
 
-            var team = Teams.FirstOrDefault(i => i.Id == id);
-            if (team == null) throw new HttpResponseException(HttpStatusCode.NotFound);
+            var team = Teams.Find(i => i.Id == id);
+            if (team == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
 
             team.League = value.League;
             team.Name = value.Name;
 
             var cache = Configuration.CacheOutputConfiguration().GetCacheOutputProvider(Request);
-            cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCachekey((TeamsController t) => t.GetById(0)));
+            cache.RemoveStartsWith(Configuration.CacheOutputConfiguration().MakeBaseCacheKey((TeamsController t) => t.GetById(0)));
         }
 
         public void Delete(int id)
         {
-            var team = Teams.FirstOrDefault(i => i.Id == id);
-            if (team == null) throw new HttpResponseException(HttpStatusCode.NotFound);
+            var team = Teams.Find(i => i.Id == id);
+            if (team == null)
+            {
+                throw new HttpResponseException(HttpStatusCode.NotFound);
+            }
 
             Teams.Remove(team);
         }
